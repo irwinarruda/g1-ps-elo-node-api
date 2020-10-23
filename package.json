@@ -1,0 +1,24 @@
+{
+  "name": "g1-ps-elo-node-api",
+  "version": "1.0.0",
+  "description": "...Nessa parte do projeto, será feita uma API com as operações CRUD para criação de usuários de um sistema web.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irwinarruda/g1-ps-elo-node-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/irwinarruda/g1-ps-elo-node-api/issues"
+  },
+  "homepage": "https://github.com/irwinarruda/g1-ps-elo-node-api#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.10"
+  }
+}
