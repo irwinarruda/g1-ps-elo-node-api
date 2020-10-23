@@ -10,9 +10,10 @@ mongoose.connect("mongodb+srv://sistemawebelo.68fnn.mongodb.net/sistemaweb", {
 }).then(() => console.log("BANCO DE DADOS ACESSADO COM SUCESSO"))
 .catch((err) => console.error("ERRO AO ACESSAR O BANCO DE DADOS " + err));
 
-app.get("/", (req, res) => {
-    return res.send("<h1>Erwin</h1>");
+app.get("/rotatest", (req, res) => {
+    return res.send("<h1>Test</h1>");
 });
+
 // Abrindo o servidor na porta 6001
 const PORT = process.env.PORT || 6001;
 app.listen(PORT, () => console.log("SERVIDOR RODANDO NA PORTA " + PORT));
