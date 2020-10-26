@@ -20,5 +20,17 @@ module.exports = {
         } catch(err) {
             console.error("ERRO AO CRIAR USUÁRIO: " + err);
         } 
+    },
+    async getUser(req, res) {
+        try {
+            const user = await User.findOne({email: req.body.email});
+            if(req.body.username !== user.username) {
+                throw new Error("USERNAME INVÁLIDO PARA O EMAIL");
+            }
+            console.log("USUARIO ENCONTRADO COM SUCESSO");
+            return res.json(user);
+        } catch(err) {
+            console.error("ERRO AO SOLICITAR USUÁRIO: " + err)
+        }
     }
 }
