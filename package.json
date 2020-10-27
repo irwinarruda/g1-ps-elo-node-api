@@ -4,6 +4,7 @@
   "description": "...Nessa parte do projeto, será feita uma API com as operações CRUD para criação de usuários de um sistema web.",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
