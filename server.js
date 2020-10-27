@@ -2,13 +2,16 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const routes = require("./src/routes");
+const dotenv = require("dotenv");
+const path = require("path");
 
-// Permite requerer respostas .json
 app.use(express.json());
+app.use(express.static(path.join(__dirname + "/public")));
+dotenv.config();
 
 // Configurando o Banco de dados
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb+srv://@sistemawebelo.68fnn.mongodb.net/sistemaweb", { 
+mongoose.connect(process.env.DB_CONNECT, { 
     useNewUrlParser: true, 
     useUnifiedTopology: true
 }).then(() => console.log("BANCO DE DADOS ACESSADO COM SUCESSO"))
