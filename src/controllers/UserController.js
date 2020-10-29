@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 require("../models/User");
 const User = mongoose.model("user");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 module.exports = {
@@ -34,18 +35,25 @@ module.exports = {
     },
     async getUser(req, res) {
         try {
+
             const user = await User.findOne({email: req.body.email});
+            if(!user) {
+                throw new Error("EMAIL INVALIDO");
+            }
             const samePassword = await bcrypt.compare(req.body.password, user.password);
+            
             if(samePassword) {
                 console.log("USUARIO LOGADO COM SUCESSO");
                 return res.json(user);
+                
             } else {
                 throw new Error("SENHA INVÁLIDA");
-            }
+            }    
             
         } catch(err) {
             console.error("ERRO AO SOLICITAR USUÁRIO: " + err);
             return res.status(404).send("ERRO AO SOLICITAR USUÁRIO: " + err);
         }
+        
     }
 }
