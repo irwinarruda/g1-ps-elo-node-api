@@ -47,6 +47,9 @@ module.exports = {
     async getUser(req, res) {
         try {
             const user = await User.findOne({email: req.body.email});
+            if(!user){
+                throw new Error("EMAIL INVALIDO"); 
+            }
             const samePassword = await bcrypt.compare(req.body.password, user.password);
             if(samePassword) {
                 console.log("USUARIO LOGADO COM SUCESSO");
