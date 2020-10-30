@@ -2,6 +2,7 @@ require("../models/User");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
 
 const User = mongoose.model("user");
 const imgURL = "http://localhost:3005/uploads/";
@@ -51,6 +52,10 @@ module.exports = {
                 throw new Error("EMAIL INVALIDO"); 
             }
             const samePassword = await bcrypt.compare(req.body.password, user.password);
+            if(samePassword){
+                const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+                console.log(token);
+            }
             if(samePassword) {
                 console.log("USUARIO LOGADO COM SUCESSO");
                 return res.json(user);
