@@ -13,6 +13,10 @@ const User = new mongoose.Schema({
         type: String,
         required: true
     },
+    urlImg: {
+        type: String, 
+        default: ""
+    },
     date: {
         type: Date,
         default: Date.now()
