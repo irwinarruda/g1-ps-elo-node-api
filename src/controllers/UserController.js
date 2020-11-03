@@ -14,23 +14,22 @@ module.exports = {
             if(haveUser !== null) {
                 throw new Error("USUÁRIO JÁ EXISTE");
             }
-            if(req.file) {
-                var pathImg = `${imgURL}${req.file.filename}`;
-            } else {
-                var pathImg = ``;
-            }
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(req.body.password, salt);
-            const newUser = {
-                username: req.body.username,
-                email: req.body.email,
-                password: hashPassword,
-                urlImg: pathImg
-            };
-            const user = await User.create(newUser);
-            console.log("USUARIO CRIADO COM SUCESSO");
 
-            return res.json(user);
+            const arrRequest = req.body;
+            const newUser = {
+                username: arrRequest.username,
+                email: arrRequest.email,
+                password: hashPassword,
+            };
+            await User.create(newUser);
+            const arrResponse = {
+                username: arrRequest.username,
+                email: arrRequest.email,
+            };
+            console.log("USUARIO CRIADO COM SUCESSO");
+            return res.json(arrResponse);
         } catch(err) {
             if(req.file) {
                 fs.unlinkSync(`public/uploads/${req.file.filename}`);
@@ -56,12 +55,13 @@ module.exports = {
                     username: user.username,
                     email: user.email
                 };
-                const accesstoken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '60s'});
+                const accesstoken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1000s'});
                 console.log(accesstoken);
                 console.log("USUARIO LOGADO COM SUCESSO");
                 const accesstokenResponse = {
                     username: user.username,
                     email: user.email,
+                    urlImg: user.urlImg,
                     accesstoken: accesstoken
                 }
                 return res.json(accesstokenResponse);
@@ -87,11 +87,17 @@ module.exports = {
                 throw new Error("IMAGEM NÃO INSERIDA");
             }
             const user = await User.findOne({email: authenticatedUser.email});
-            fs.unlinkSync(`public/uploads/${user.urlImg.split("/")[4]}`);
-
-            const userUpdate = await User.findOneAndUpdate({email: req.user.email}, {urlImg: pathImg}, {new: true});
+            if(user.urlImg !== "") {
+                fs.unlinkSync(`public/uploads/${user.urlImg.split("/")[4]}`);
+            }
+            const userUpdate = await User.findOneAndUpdate({email: req.user.email}, {urlImg: pathImg}, {new: true, useFindAndModify: false});
+            const arrResponse = {
+                username: userUpdate.username,
+                email: userUpdate.email,
+                urlImg: userUpdate.urlImg
+            };
             console.log("USUARIO ATUALIZADO COM SUCESSO");
-            return res.json(userUpdate);
+            return res.json(arrResponse);
         } catch(err) {
             fs.unlinkSync(`public/uploads/${req.file.filename}`);
             console.error("ERRO AO ATUALIZAR USUÁRIO: " + err);
@@ -103,23 +109,28 @@ module.exports = {
             return res.status(statusNumber).json(satusmessage);
         }
     },
-    /* async findUsers(req, res) {
+    async updateMovieDB(req, res) {
         try {
-            const user = await User.find();
-            console.log("USUARIOS PROCURADOS COM SUCESSO");
-            return res.json(user);
-        } catch (err) {
-            console.error("ERRO AO PROCURAR USUÁRIOS: " + err);
-        } 
-    }, */
-    /* async destroy(req, res) {
-        try {
-            User.findOneAndRemove({email: req.body.email});
-            console.log("USUÁRIO REMOVIDO COM SUCESSO");
-            return res.send("USUÁRIO REMOVIDO COM SUCESSO");
+            const authenticatedUser = req.user;
+            const user = await User.findOne({email: authenticatedUser.email});
+            user.movieDB.push(Number(req.body.movieDB))
+            const userUpdate = await User.findOneAndUpdate({email: req.user.email}, {movieDB: user.movieDB}, {new: true, useFindAndModify: false});
+            const arrResponse = {
+                username: userUpdate.username,
+                email: userUpdate.email,
+                movieDB: userUpdate.movieDB
+            };
+            console.log("MOVIEDB ATUALIZADO COM SUCESSO");
+            return res.json(arrResponse);
+
         } catch(err) {
-            console.error("ERRO AO REMOVER USUÁRIO: " + err);
-            return res.status(400).send("ERRO AO REMOVER USUÁRIO: " + err);
+            console.error("ERRO AO ATUALIZAR MOVIEDB: " + err);
+            const statusNumber = 400;
+            const satusmessage = {
+                status: statusNumber,
+                error: "ERRO AO ATUALIZAR MOVIEDB: " + err
+            }
+            return res.status(statusNumber).json(satusmessage);
         }
-    } */
+    },
 }
