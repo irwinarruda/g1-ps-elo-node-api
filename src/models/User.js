@@ -17,6 +17,10 @@ const User = new mongoose.Schema({
         type: String, 
         default: ""
     },
+    movieDB: {
+        type: [Number],
+        default: []
+    },
     date: {
         type: Date,
         default: Date.now()
