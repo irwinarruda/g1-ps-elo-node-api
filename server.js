@@ -4,10 +4,13 @@ const mongoose = require("mongoose");
 const routes = require("./src/routes");
 const dotenv = require("dotenv");
 const path = require("path");
+const cors = require("cors");
 
+// Configurações básicas
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname + "/public")));
+app.use(cors());
 dotenv.config();
 
 // Configurando o Banco de dados
