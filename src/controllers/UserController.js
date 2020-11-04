@@ -89,7 +89,7 @@ module.exports = {
                 throw new Error("IMAGEM NÃO INSERIDA");
             }
             const user = await User.findOne({email: authenticatedUser.email});
-            if(user.urlImg !== "") {
+            if(user.urlImg !== `${imgURL}LogoG1.png`) {
                 fs.unlinkSync(`public/uploads/${user.urlImg.split("/")[4]}`);
             }
             const userUpdate = await User.findOneAndUpdate({email: req.user.email}, {urlImg: pathImg}, {new: true, useFindAndModify: false});
@@ -122,6 +122,7 @@ module.exports = {
                 urlImg: user.urlImg,
                 movieDB: user.movieDB
             };
+            console.log("USUÁRIO ESTÁ LOGADO");
             return res.json(arrResponse);
         } catch(err) {
             console.error("ERRO AO VERIFICAR SE USUARI ESTA LOGADO: " + err);
