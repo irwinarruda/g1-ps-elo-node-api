@@ -11,7 +11,6 @@ module.exports = (req, res, next) => {
             res.status(400).send("TOKEN INVÁLIDO");
         }
         req.user = user;
-        console.log("reqUser " + req.user.email);
         next();
     }); 
 }

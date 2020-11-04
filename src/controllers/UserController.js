@@ -16,17 +16,19 @@ module.exports = {
             }
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(req.body.password, salt);
-
+            const pathImg = `${imgURL}LogoG1.png`;
             const arrRequest = req.body;
             const newUser = {
                 username: arrRequest.username,
                 email: arrRequest.email,
                 password: hashPassword,
+                urlImg: pathImg
             };
             await User.create(newUser);
             const arrResponse = {
                 username: arrRequest.username,
                 email: arrRequest.email,
+                urlImg: pathImg,
             };
             console.log("USUARIO CRIADO COM SUCESSO");
             return res.json(arrResponse);
@@ -55,13 +57,13 @@ module.exports = {
                     username: user.username,
                     email: user.email
                 };
-                const accesstoken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1000s'});
-                console.log(accesstoken);
+                const accesstoken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '86400s'});
                 console.log("USUARIO LOGADO COM SUCESSO");
                 const accesstokenResponse = {
                     username: user.username,
                     email: user.email,
                     urlImg: user.urlImg,
+                    movieDB: user.movieDB,
                     accesstoken: accesstoken
                 }
                 return res.json(accesstokenResponse);
@@ -94,7 +96,8 @@ module.exports = {
             const arrResponse = {
                 username: userUpdate.username,
                 email: userUpdate.email,
-                urlImg: userUpdate.urlImg
+                urlImg: userUpdate.urlImg,
+                movieDB: user.movieDB
             };
             console.log("USUARIO ATUALIZADO COM SUCESSO");
             return res.json(arrResponse);
@@ -105,6 +108,27 @@ module.exports = {
             const satusmessage = {
                 status: statusNumber,
                 error: "ERRO AO ATUALIZAR USUÁRIO: " + err
+            }
+            return res.status(statusNumber).json(satusmessage);
+        }
+    },
+    async islogedUser(req, res) {
+        try {
+            const authenticatedUser = req.user; 
+            const user = await User.findOne({email: authenticatedUser.email});
+            const arrResponse = {
+                username: user.username,
+                email: user.email,
+                urlImg: user.urlImg,
+                movieDB: user.movieDB
+            };
+            return res.json(arrResponse);
+        } catch(err) {
+            console.error("ERRO AO VERIFICAR SE USUARI ESTA LOGADO: " + err);
+            const statusNumber = 400;
+            const satusmessage = {
+                status: statusNumber,
+                error: "ERRO AO VERIFICAR SE USUARI ESTA LOGADO: " + err
             }
             return res.status(statusNumber).json(satusmessage);
         }
